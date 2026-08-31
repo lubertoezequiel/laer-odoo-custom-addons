@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <template id="report_payment_receipt_document"
+              inherit_id="account.report_payment_receipt_document"
+              priority="16">
+        <data>
+            <!-- Ocultar las tablas nativas separadas (cheques, retenciones) para
+                 concentrar todo en una sola tabla -->
+            <xpath expr="//table[@id='l10n_latam_check']" position="replace"/>
+            <xpath expr="//table[@id='l10n_ar_withholding']" position="replace"/>
+
+            <!-- Compactar la tabla de facturas (interlineado y padding mas chicos) -->
+            <xpath expr="//table[@name='invoices']" position="before">
+                <style>
+                    table[name="invoices"] td, table[name="invoices"] th {
+                        padding: 2px 6px !important;
+                        line-height: 1.1 !important;
+                    }
+                </style>
+            </xpath>
+
+            <!-- Tabla unica estilo planilla, mas compacta verticalmente. Valores y
+                 Retenciones alineados a la derecha, junto a la columna Importe, no
+                 a la izquierda como Forma de Pago. -->
+            <xpath expr="//div[@class='row'][.//span[@t-field='o.amount']]" position="replace">
+                <t t-set="checks" t-value="o._get_latam_checks()"/>
+                <t t-set="retenciones" t-value="o.l10n_ar_withholding_ids"/>
+                <t t-set="valores_total" t-value="sum(c.amount for c in checks) if checks else o.amount"/>
+                <t t-set="retenciones_total" t-value="sum(abs(l.amount_currency) for l in retenciones)"/>
+                <t t-set="monto_abonado" t-value="valores_total + retenciones_total"/>
+                <t t-set="th_style" t-value="'border:1px solid #999; background-color:#f2f2f2; padding:2px 8px; line-height:1.1;'"/>
+                <t t-set="td_style" t-value="'border:1px solid #999; padding:2px 8px; line-height:1.1;'"/>
+
+                <table class="table table-sm mt-2" name="forma_pago_unica" style="border-collapse:collapse; margin-bottom:0;" t-if="o.amount or retenciones">
+                    <thead>
+                        <tr>
+                            <th t-att-style="th_style"><span>Forma de Pago</span></th>
+                            <th t-att-style="th_style"><span>Referencia</span></th>
+                            <th t-att-style="th_style"><span>Banco</span></th>
+                            <th t-att-style="th_style"><span>Fecha Pago</span></th>
+                            <th t-att-style="th_style + 'text-align:right;'"><span>Importe</span></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <t t-if="checks">
+                            <tr t-foreach="checks" t-as="check">
+                                <td t-att-style="td_style">Cheque</td>
+                                <td t-att-style="td_style"><span t-field="check.name"/></td>
+                                <td t-att-style="td_style"><span t-field="check.bank_id.display_name"/></td>
+                                <td t-att-style="td_style"><span t-field="check.payment_date"/></td>
+                                <td t-att-style="td_style + 'text-align:right;'"><span t-out="check.amount" t-options="{'widget': 'monetary', 'display_currency': o.currency_id}"/></td>
+                            </tr>
+                        </t>
+                        <t t-elif="o.amount">
+                            <tr>
+                                <td t-att-style="td_style"><span t-field="o.payment_method_line_id.payment_method_id.name"/></td>
+                                <td t-att-style="td_style"><span t-field="o.memo"/></td>
+                                <td t-att-style="td_style"><span t-out="o.journal_id.bank_id.name or o.journal_id.name"/></td>
+                                <td t-att-style="td_style"><span t-field="o.date"/></td>
+                                <td t-att-style="td_style + 'text-align:right;'"><span t-field="o.amount" t-options="{'widget': 'monetary', 'display_currency': o.currency_id}"/></td>
+                            </tr>
+                        </t>
+                        <tr t-foreach="retenciones" t-as="ret">
+                            <td t-att-style="td_style">Retención <span t-field="ret.tax_line_id.name"/></td>
+                            <td t-att-style="td_style"><span t-field="ret.name"/></td>
+                            <td t-att-style="td_style"/>
+                            <td t-att-style="td_style"><span t-field="o.date"/></td>
+                            <td t-att-style="td_style + 'text-align:right;'"><span t-out="abs(ret.amount_currency)" t-options="{'widget': 'monetary', 'display_currency': o.currency_id}"/></td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <!-- Tabla de subtotales SEPARADA de la tabla con bordes de arriba,
+                     para que no haya artefactos de border-collapse entre ambas.
+                     Solo dos celdas por fila (etiqueta + importe), sin bordes. -->
+                <table t-if="retenciones" style="margin-left:auto; margin-top:0; border-collapse:collapse;">
+                    <tr>
+                        <td style="border:none; padding:2px 8px; text-align:right;">Valores</td>
+                        <td style="border:none; padding:2px 8px; text-align:right;"><span t-out="valores_total" t-options="{'widget': 'monetary', 'display_currency': o.currency_id}"/></td>
+                    </tr>
+                    <tr>
+                        <td style="border:none; padding:2px 8px; text-align:right;">Retenciones</td>
+                        <td style="border:none; padding:2px 8px; text-align:right;"><span t-out="retenciones_total" t-options="{'widget': 'monetary', 'display_currency': o.currency_id}"/></td>
+                    </tr>
+                    <tr>
+                        <td style="border:none; background-color:#f2f2f2; padding:2px 8px; text-align:right;"><strong>Monto Abonado</strong></td>
+                        <td style="border:none; background-color:#f2f2f2; padding:2px 8px; text-align:right;"><strong><span t-out="monto_abonado" t-options="{'widget': 'monetary', 'display_currency': o.currency_id}"/></strong></td>
+                    </tr>
+                </table>
+            </xpath>
+        </data>
+    </template>
+
+</odoo>
