@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!--
+        LAER TECHNOLOGY GROUP — Encabezado Compacto para todos los reportes
+        Odoo 19 — XPaths basados en estructura real de web.external_layout_standard
+
+        ESTRUCTURA REAL del header (web/views/report_templates.xml):
+          <div class="header o_company_X_layout">
+            <div class="d-flex justify-content-between align-items-center mb-2">
+              <img class="o_company_logo_small"/>
+              <div class="o_company_tagline"/>
+            </div>
+            <div class="row">
+              <div class="col-6" name="company_address">...</div>
+            </div>
+          </div>
+
+          En el article:
+            <t t-call="web.address_layout"/>   = bloque del cliente (div.address.row.mb-4)
+            <h2 t-out="layout_document_title"/> = número de documento
+
+        ESTRATEGIA:
+          1. Reemplazar la fila "logo+tagline" por 3 columnas: logo | empresa | cliente
+          2. Eliminar el row de company_address (ya incluido en col empresa arriba)
+          3. Ocultar el address_layout flotante (cliente ya está en col 3)
+          4. CSS reduce h2 y tablas
+    -->
+
+    <!-- =================================================================
+         1. OVERRIDE: header de external_layout_standard
+         ================================================================= -->
+    <template id="laer_external_layout_standard"
+              inherit_id="web.external_layout_standard"
+              priority="20">
+
+        <!-- Reemplazar la fila superior (logo + tagline) por header de 3 columnas -->
+        <xpath expr="//div[hasclass('d-flex')][hasclass('justify-content-between')][hasclass('mb-2')]"
+               position="replace">
+            <div class="d-flex justify-content-between align-items-start laer-header-row">
+
+                <!-- Columna 1: Logo -->
+                <div class="laer-logo-col" style="flex:0 0 auto; margin-right:10px;">
+                    <img t-if="company.logo"
+                         class="o_company_logo_small"
+                         t-att-src="image_data_uri(company.logo)"
+                         alt="Logo"
+                         style="max-height:50px;"/>
+                </div>
+
+                <!-- Columna 2: Tagline / nombre empresa -->
+                <div class="laer-company-col" style="flex:1 1 auto;">
+                    <div t-if="company.report_header"
+                         t-field="company.report_header"
+                         class="o_company_tagline fw-bold"/>
+                </div>
+
+                <!-- Columna 3: Dirección del cliente (movida aquí desde address_layout) -->
+                <div class="laer-partner-col text-end" style="flex:0 0 200px;">
+                    <t t-out="address or None"/>
+                </div>
+
+            </div>
+        </xpath>
+
+        <!-- Eliminar el div.row con company_address (ya está integrado arriba vía tagline/company_details) -->
+        <xpath expr="//div[hasclass('row')][.//div[@name='company_address']]"
+               position="replace">
+            <!-- company_address suprimido: los datos de empresa van en company_details / tagline -->
+        </xpath>
+
+    </template>
+
+
+    <!-- =================================================================
+         2. OVERRIDE: address_layout — ocultar bloque separado del cliente
+            (ya lo mostramos embebido en la col 3 del header)
+         ================================================================= -->
+    <template id="laer_address_layout"
+              inherit_id="web.address_layout"
+              priority="20">
+        <xpath expr="//div[hasclass('address')]" position="attributes">
+            <attribute name="style">display:none !important;</attribute>
+        </xpath>
+    </template>
+
+
+</odoo>

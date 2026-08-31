@@ -1,0 +1,161 @@
+/* =======================================================
+   LAER TECHNOLOGY GROUP — Reportes Compactos — Odoo 19
+   ======================================================= */
+
+/* -------------------------------------------------------
+   HEADER: fila compacta logo | empresa | cliente
+   ------------------------------------------------------- */
+.laer-header-row {
+    margin-bottom: 4px !important;
+    padding-bottom: 4px !important;
+    border-bottom: 1px solid #ddd;
+}
+
+.laer-logo-col img {
+    max-height: 50px !important;
+    max-width: 130px !important;
+    width: auto !important;
+    object-fit: contain;
+}
+
+.laer-company-col {
+    font-size: 8pt !important;
+    line-height: 1.3 !important;
+}
+
+.laer-partner-col {
+    font-size: 8pt !important;
+    line-height: 1.3 !important;
+}
+
+.laer-partner-col address,
+.laer-partner-col .mb-0 {
+    font-size: 8pt !important;
+    line-height: 1.3 !important;
+    margin-bottom: 0 !important;
+}
+
+/* Dirección de empresa compacta */
+.laer-company-address-row {
+    margin-top: 0 !important;
+    margin-bottom: 2px !important;
+}
+
+.laer-company-address-row ul {
+    font-size: 8pt !important;
+    line-height: 1.3 !important;
+    margin-bottom: 0 !important;
+}
+
+/* -------------------------------------------------------
+   NÚMERO DE DOCUMENTO: reducir h2 (era ~22pt)
+   ------------------------------------------------------- */
+.article h2,
+div.article h2 {
+    font-size: 14pt !important;
+    font-weight: 700 !important;
+    margin-top: 4px !important;
+    margin-bottom: 4px !important;
+    line-height: 1.2 !important;
+}
+
+.article h1,
+div.article h1 {
+    font-size: 15pt !important;
+    margin-top: 4px !important;
+    margin-bottom: 4px !important;
+}
+
+/* -------------------------------------------------------
+   BLOQUE DE METADATOS (fechas, vendedor, etc.)
+   ------------------------------------------------------- */
+#informations,
+div#informations {
+    margin-bottom: 6px !important;
+    padding: 6px 8px !important;
+}
+
+#informations .col,
+#informations .col-auto {
+    padding-top: 2px !important;
+    padding-bottom: 2px !important;
+}
+
+#informations strong {
+    font-size: 8pt !important;
+    display: block;
+    line-height: 1.2;
+}
+
+#informations div,
+#informations span {
+    font-size: 8pt !important;
+    line-height: 1.3 !important;
+}
+
+/* -------------------------------------------------------
+   TABLA DE PRODUCTOS
+   ------------------------------------------------------- */
+.o_main_table thead th {
+    font-size: 11pt !important;
+    padding: 4px 6px !important;
+    line-height: 1.2 !important;
+}
+
+.o_main_table tbody td {
+    font-size: 11pt !important;
+    padding: 3px 6px !important;
+    line-height: 1.3 !important;
+}
+
+.o_main_table tbody td p,
+.o_main_table tbody td span {
+    font-size: 11pt !important;
+    margin-bottom: 0 !important;
+}
+
+/* -------------------------------------------------------
+   TOTALES E IMPUESTOS
+   ------------------------------------------------------- */
+.o_total_table td {
+    font-size: 11pt !important;
+    padding: 3px 6px !important;
+}
+
+.o_total td,
+tr.o_total td {
+    font-size: 14pt !important;
+    font-weight: 700 !important;
+}
+
+/* -------------------------------------------------------
+   NOTAS Y CONDICIONES
+   ------------------------------------------------------- */
+p[name="note"],
+.o_note {
+    font-size: 7.5pt !important;
+    line-height: 1.3 !important;
+    margin-top: 4px !important;
+}
+
+/* -------------------------------------------------------
+   ESPACIADO GENERAL
+   ------------------------------------------------------- */
+.article {
+    padding-top: 4px !important;
+}
+
+.article .row {
+    margin-bottom: 2px !important;
+}
+
+.article hr {
+    margin: 4px 0 !important;
+}
+
+/* address general */
+address {
+    font-size: 8pt !important;
+    line-height: 1.3 !important;
+    margin-bottom: 0 !important;
+}
