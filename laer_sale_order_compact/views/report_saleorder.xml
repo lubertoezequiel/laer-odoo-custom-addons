@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <template id="report_saleorder_document_compact"
+              inherit_id="sale.report_saleorder_document"
+              priority="16">
+        <data>
+
+            <!-- ===================================================== -->
+            <!-- HEADER -->
+            <!-- ===================================================== -->
+            <xpath expr="//t[@t-set='layout_document_title']" position="replace">
+                <t t-set="layout_document_title">
+                    <div style="
+                        font-size:24px;
+                        font-weight:600;
+                        line-height:1.1;
+                        margin:0;
+                        padding:0;
+                    ">
+                        <span t-if="is_proforma">Pro-Forma # </span>
+                        <span t-elif="doc.state in ['draft','sent']">Cotizacion # </span>
+                        <span t-else="">Orden # </span>
+                        <span t-field="doc.name"/>
+                    </div>
+                </t>
+            </xpath>
+
+            <xpath expr="//table[contains(@class,'o_main_table')]/thead/tr" position="replace">
+                <tr>
+                    <th class="text-start">Código</th>
+                    <th class="text-start">Descripción</th>
+                    <th class="text-end">Cantidad</th>
+                    <th class="text-end">Precio Unitario</th>
+                    <th class="text-end">Impuestos</th>
+                    <th class="text-end">Importe</th>
+                </tr>
+            </xpath>
+
+            <!-- ===================================================== -->
+            <!-- CÓDIGO (REEMPLAZA PRIMERA COLUMNA DEL PRODUCTO) -->
+            <!-- ===================================================== -->
+            <xpath expr="//tbody//tr[contains(@name,'tr_product')]//td[1]" position="replace">
+                <td>
+                    <span t-field="line.product_id.name"/>
+                </td>
+            </xpath>
+
+            <!-- ===================================================== -->
+            <!-- DESCRIPCIÓN (SEGUNDA COLUMNA) -->
+            <!-- ===================================================== -->
+            <xpath expr="//tbody//tr[contains(@name,'tr_product')]//td[1]" position="after">
+                <td>
+                    <t t-if="line.product_id.description_sale">
+                        <span t-field="line.product_id.description_sale"/>
+                    </t>
+                    <t t-else="">
+                        <span t-field="line.product_id.name"/>
+                    </t>
+                </td>
+            </xpath>
+
+            <!-- ===================================================== -->
+            <!-- CANTIDAD SIN UNIDADES -->
+            <!-- ===================================================== -->
+            <xpath expr="//td[@name='td_product_quantity']/span[@t-field='line.product_uom_id']" position="replace"/>
+
+            <!-- ===================================================== -->
+            <!-- IMPUESTOS -->
+            <!-- ===================================================== -->
+            <xpath expr="//td[@name='td_product_taxes']" position="replace">
+                <td class="text-end">
+                    <span t-esc="', '.join(line.tax_ids.mapped('name'))"/>
+                </td>
+            </xpath>
+
+            <!-- ===================================================== -->
+            <!-- IMPORTE -->
+            <!-- ===================================================== -->
+            <xpath expr="//td[@name='td_product_subtotal']" position="replace">
+                <td class="text-end">
+                    <span t-field="line.price_subtotal"/>
+                </td>
+            </xpath>
+
+            <xpath expr="//table[contains(@class,'o_main_table')]" position="before">
+                <style>
+                    .o_main_table tbody td,
+                    .o_main_table tbody td span,
+                    .o_main_table tbody td p {
+                        font-size: 11.5pt !important;
+                        line-height: 1.2 !important;
+                    }
+                    .o_total_table tr.o_total td {
+                        font-size: 12.5pt !important;
+                    }
+                </style>
+            </xpath>
+        </data>
+    </template>
+
+</odoo>
