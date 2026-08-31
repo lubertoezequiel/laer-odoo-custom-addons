@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <template id="report_invoice_bank_account"
+              inherit_id="l10n_ar.report_invoice_document"
+              priority="16">
+        <data>
+            <!-- Cuenta bancaria al lado del QR: CUIT, Razon Social, Banco, CBU y
+                 Numero de cuenta (clearing_number) de la empresa emisora, en letra
+                 un poco mas chica. No se toca el QR ni el CAE. -->
+            <xpath expr="//div[@name='footer_left_column']/img" position="attributes">
+                <attribute name="style">height:100px; display:inline-block; vertical-align:top;</attribute>
+            </xpath>
+            <xpath expr="//div[@name='footer_left_column']/img" position="after">
+                <div t-if="o.partner_bank_id" style="display:inline-block; vertical-align:top; margin-left:10px; font-size:9px;">
+                    CUIT: <span t-field="o.company_id.partner_id.l10n_ar_formatted_vat" class="fw-bold"/><br/>
+                    Razón Social: <span t-field="o.company_id.name" class="fw-bold"/><br/>
+                    Banco: <span t-field="o.partner_bank_id.bank_id.name" class="fw-bold"/><br/>
+                    CBU: <span t-field="o.partner_bank_id.acc_number" class="fw-bold"/><br/>
+                    <t t-if="o.partner_bank_id.clearing_number">Número de cuenta: <span t-field="o.partner_bank_id.clearing_number" class="fw-bold"/></t>
+                </div>
+            </xpath>
+        </data>
+    </template>
+
+</odoo>
