@@ -21,10 +21,20 @@
             <h2 t-out="layout_document_title"/> = número de documento
 
         ESTRATEGIA:
-          1. Reemplazar la fila "logo+tagline" por 3 columnas: logo | empresa | cliente
+          1. Reemplazar la fila "logo+tagline" por 2 columnas: logo | empresa
           2. Eliminar el row de company_address (ya incluido en col empresa arriba)
-          3. Ocultar el address_layout flotante (cliente ya está en col 3)
-          4. CSS reduce h2 y tablas
+          3. CSS reduce h2 y tablas
+
+        NOTA: se intentó varias veces alinear la dirección del cliente con la
+        empresa (como 3ra columna en el header, y moviendo el header entero al
+        body). Las dos causaron regresiones (superposición de contenido, y
+        el cliente dejando de verse) sin poder confirmarlas visualmente antes
+        de que el usuario las viera en producción. Se vuelve a la versión
+        simple y ya probada: header con logo + empresa únicamente, dirección
+        del cliente en el cuerpo vía web.address_layout normal (sin tocar),
+        sólo con el CSS de compact_reports.css agrandando su tipografía.
+        No volver a tocar esta alineación sin poder verificarla visualmente
+        antes de pedirle al usuario que pruebe.
     -->
 
     <!-- =================================================================
@@ -34,33 +44,41 @@
               inherit_id="web.external_layout_standard"
               priority="20">
 
-        <!-- Reemplazar la fila superior (logo + tagline) por header de 3 columnas -->
+        <!-- Reemplazar la fila superior (logo + tagline) por header de 2 columnas.
+             Se usa una <table> en vez de display:flex porque wkhtmltopdf (el motor
+             que convierte el HTML a PDF) tiene soporte muy pobre de flexbox: el
+             HTML se ve bien en el navegador pero el contenido queda invisible o
+             mal posicionado en el PDF. Las tablas sí son 100% confiables ahí. -->
         <xpath expr="//div[hasclass('d-flex')][hasclass('justify-content-between')][hasclass('mb-2')]"
                position="replace">
-            <div class="d-flex justify-content-between align-items-start laer-header-row">
+            <table class="laer-header-row" style="width:100%; border-collapse:collapse; border:none;">
+                <tr>
 
-                <!-- Columna 1: Logo -->
-                <div class="laer-logo-col" style="flex:0 0 auto; margin-right:10px;">
-                    <img t-if="company.logo"
-                         class="o_company_logo_small"
-                         t-att-src="image_data_uri(company.logo)"
-                         alt="Logo"
-                         style="max-height:50px;"/>
-                </div>
+                    <!-- Columna 1: Logo -->
+                    <td class="laer-logo-col" style="width:140px; vertical-align:top; padding-right:10px; border:none;">
+                        <img t-if="company.logo"
+                             class="o_company_logo_small"
+                             t-att-src="image_data_uri(company.logo)"
+                             alt="Logo"
+                             style="max-height:50px;"/>
+                    </td>
 
-                <!-- Columna 2: Tagline / nombre empresa -->
-                <div class="laer-company-col" style="flex:1 1 auto;">
-                    <div t-if="company.report_header"
-                         t-field="company.report_header"
-                         class="o_company_tagline fw-bold"/>
-                </div>
+                    <!-- Columna 2: Tagline / nombre empresa. Si no hay tagline (company.report_header
+                         vacio, como pasa en 'Cuenta'), mostramos nombre + direccion de la empresa
+                         en su lugar para que la columna nunca quede en blanco. -->
+                    <td class="laer-company-col" style="vertical-align:top; border:none;">
+                        <div t-if="company.report_header"
+                             t-field="company.report_header"
+                             class="o_company_tagline fw-bold"/>
+                        <div t-else="">
+                            <div class="fw-bold" t-field="company.partner_id.name"/>
+                            <div t-field="company.partner_id"
+                                 t-options="{'widget': 'contact', 'fields': ['address'], 'no_marker': True}"/>
+                        </div>
+                    </td>
 
-                <!-- Columna 3: Dirección del cliente (movida aquí desde address_layout) -->
-                <div class="laer-partner-col text-end" style="flex:0 0 200px;">
-                    <t t-out="address or None"/>
-                </div>
-
-            </div>
+                </tr>
+            </table>
         </xpath>
 
         <!-- Eliminar el div.row con company_address (ya está integrado arriba vía tagline/company_details) -->
@@ -70,19 +88,5 @@
         </xpath>
 
     </template>
-
-
-    <!-- =================================================================
-         2. OVERRIDE: address_layout — ocultar bloque separado del cliente
-            (ya lo mostramos embebido en la col 3 del header)
-         ================================================================= -->
-    <template id="laer_address_layout"
-              inherit_id="web.address_layout"
-              priority="20">
-        <xpath expr="//div[hasclass('address')]" position="attributes">
-            <attribute name="style">display:none !important;</attribute>
-        </xpath>
-    </template>
-
 
 </odoo>

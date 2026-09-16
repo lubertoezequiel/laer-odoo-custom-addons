@@ -1,0 +1,227 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <template id="report_invoice_document_compact"
+              inherit_id="account.report_invoice_document"
+              priority="16">
+        <data>
+
+            <!-- ========================= -->
+            <!-- TITULO -->
+            <!-- ========================= -->
+            <xpath expr="//t[@t-set='layout_document_title']" position="replace">
+                <t t-set="layout_document_title">
+                    <span style="font-size:24px; font-weight:600; line-height:1.1;">
+                        <t t-if="o.move_type == 'out_invoice'"># </t>
+                        <t t-elif="o.move_type == 'out_refund'">Nota de Crédito # </t>
+                        <t t-else="">Documento # </t>
+                        <span t-field="o.name"/>
+                    </span>
+                </t>
+            </xpath>
+
+            <!-- ========================= -->
+            <!-- ESPACIO VACIO ENTRE ENCABEZADO Y CLIENTE -->
+            <!-- Odoo inserta un div.oe_structure vacio (con un <br/> interno,
+                 zona editable del Website Builder) justo antes de #informations.
+                 Lo ocultamos para no dejar un salto de linea en blanco. -->
+            <!-- ========================= -->
+            <xpath expr="//div[@id='informations']/preceding-sibling::div[@class='oe_structure'][1]" position="attributes">
+                <attribute name="style">display:none;</attribute>
+            </xpath>
+
+            <!-- ========================= -->
+            <!-- ETIQUETA "Fecha" EN VEZ DE "Fecha de factura / Nota de Credito / ..." -->
+            <!-- Solo afecta a facturas que NO pasan por la plantilla especifica de AR
+                 (l10n_ar reemplaza #informations por completo, asi que esto nunca toca
+                 AEN S.R.L. ni LAER TECHNOLOGY GROUP, solo empresas sin localizacion AR). -->
+            <!-- ========================= -->
+            <xpath expr="//div[@name='invoice_date']" position="replace">
+                <div class="col" t-if="o.invoice_date" name="invoice_date">
+                    <strong>Fecha</strong>
+                    <div t-field="o.invoice_date">2023-09-12</div>
+                </div>
+            </xpath>
+
+            <!-- ========================= -->
+            <!-- RECUADRO CLIENTE -->
+            <!-- ========================= -->
+            <xpath expr="//div[@name='no_shipping']" position="replace">
+                <div class="offset-col-6 col-6" name="no_shipping">
+                    <t t-set="address">
+                        <div class="laer-client-address" style="border:1px solid #cccccc; border-radius:6px; padding:10px; margin-bottom:8px;">
+                            <strong style="display:block; margin-bottom:4px; font-size:11px;">Cliente</strong>
+                            <address class="mb-0" t-field="o.partner_id" t-options="{'widget': 'contact', 'fields': ['address', 'name'], 'no_marker': True}"/>
+                            <div t-if="o.partner_id.vat" id="partner_vat_no_shipping">
+                                <t t-if="o.company_id.account_fiscal_country_id.vat_label" t-out="o.company_id.account_fiscal_country_id.vat_label" id="inv_tax_id_label"/>
+                                <t t-else="">Tax ID</t>: <span t-field="o.partner_id.vat"/>
+                            </div>
+                        </div>
+                    </t>
+                </div>
+            </xpath>
+
+            <xpath expr="//div[@name='address_same_as_shipping']" position="replace">
+                <div class="offset-col-6 col-6" name="address_same_as_shipping">
+                    <t t-set="address">
+                        <div class="laer-client-address" style="border:1px solid #cccccc; border-radius:6px; padding:10px; margin-bottom:8px;">
+                            <strong style="display:block; margin-bottom:4px; font-size:11px;">Cliente</strong>
+                            <address class="mb-0" t-field="o.partner_id" t-options="{'widget': 'contact', 'fields': ['address', 'name'], 'no_marker': True}"/>
+                            <div t-if="o.partner_id.vat" id="partner_vat_address_same_as_shipping">
+                                <t t-if="o.company_id.account_fiscal_country_id.vat_label" t-out="o.company_id.account_fiscal_country_id.vat_label" id="inv_tax_id_label"/>
+                                <t t-else="">Tax ID</t>: <span t-field="o.partner_id.vat"/>
+                            </div>
+                        </div>
+                    </t>
+                </div>
+            </xpath>
+
+            <xpath expr="//div[@name='address_not_same_as_shipping']" position="replace">
+                <div class="col-6" name="address_not_same_as_shipping">
+                    <t t-set="address">
+                        <div class="laer-client-address" style="border:1px solid #cccccc; border-radius:6px; padding:10px; margin-bottom:8px;">
+                            <strong style="display:block; margin-bottom:4px; font-size:11px;">Cliente</strong>
+                            <address class="mb-0" t-field="o.partner_id" t-options="{'widget': 'contact', 'fields': ['address', 'name'], 'no_marker': True}"/>
+                            <div t-if="o.partner_id.vat" id="partner_vat_address_not_same_as_shipping">
+                                <t t-if="o.company_id.account_fiscal_country_id.vat_label" t-out="o.company_id.account_fiscal_country_id.vat_label" id="inv_tax_id_label"/>
+                                <t t-else="">Tax ID</t>: <span t-field="o.partner_id.vat"/>
+                            </div>
+                        </div>
+                    </t>
+                </div>
+            </xpath>
+
+            <!-- ========================= -->
+            <!-- CABECERA -->
+            <!-- ========================= -->
+            <xpath expr="//th[@name='th_description']" position="replace">
+                <th name="th_description" class="text-start" style="width:130px; ">Código</th>
+                <th class="text-start" style="">Descripción</th>
+            </xpath>
+            <xpath expr="//th[@name='th_quantity']" position="attributes">
+                <attribute name="style">width:80px; white-space:nowrap; </attribute>
+            </xpath>
+            <xpath expr="//th[@name='th_quantity']/span" position="replace">
+                <span>Cant</span>
+            </xpath>
+            <xpath expr="//th[@name='th_priceunit']" position="attributes">
+                <attribute name="style">width:100px; white-space:nowrap; </attribute>
+            </xpath>
+            <xpath expr="//th[@name='th_priceunit']/span" position="replace">
+                <span>P.Unitario</span>
+            </xpath>
+            <xpath expr="//th[@name='th_taxes']" position="attributes">
+                <attribute name="style">width:80px; white-space:nowrap; </attribute>
+            </xpath>
+            <xpath expr="//th[@name='th_subtotal']" position="attributes">
+                <attribute name="style">width:100px; white-space:nowrap; </attribute>
+            </xpath>
+            <xpath expr="//th[@name='th_subtotal']/span" position="replace">
+                <span>Importe</span>
+            </xpath>
+
+            <!-- ========================= -->
+            <!-- NOMBRE PRODUCTO (Código + Descripción) -->
+            <!-- ========================= -->
+            <xpath expr="//td[@name='account_invoice_line_name']" position="replace">
+                <td name="account_invoice_line_name" t-att-class="padding_class" style="width:130px; ">
+                    <span t-field="line.product_id.name"/>
+                </td>
+                <td style="">
+                    <span t-if="line.product_id.description_sale" t-field="line.product_id.description_sale"/>
+                    <span t-else="" t-field="line.product_id.name"/>
+                </td>
+            </xpath>
+
+            <!-- ========================= -->
+            <!-- QUITAR UOM -->
+            <!-- ========================= -->
+            <xpath expr="//span[@t-field='line.product_uom_id']" position="replace"/>
+
+            <!-- ========================= -->
+            <!-- CANTIDAD -->
+            <!-- ========================= -->
+            <xpath expr="//td[@name='td_quantity']" position="replace">
+                <td name="td_quantity" class="text-end" style="width:60px; white-space:nowrap; ">
+                    <span t-field="line.quantity"/>
+                </td>
+            </xpath>
+
+            <!-- ========================= -->
+            <!-- PRECIO UNITARIO -->
+            <!-- ========================= -->
+            <xpath expr="//td[@name='td_price_unit']" position="replace">
+                <td name="td_price_unit" class="text-end" style="width:100px; white-space:nowrap; ">
+                    <span t-field="line.price_unit" t-options="{'widget': 'monetary', 'display_currency': o.currency_id}"/>
+                </td>
+            </xpath>
+
+            <!-- ========================= -->
+            <!-- SUBTOTAL -->
+            <!-- ========================= -->
+            <xpath expr="//td[@name='td_subtotal']" position="replace">
+                <td name="td_subtotal" class="text-end o_price_total" style="width:100px; white-space:nowrap; font-weight:600; ">
+                    <span t-field="line.price_subtotal" t-options="{'widget': 'monetary', 'display_currency': o.currency_id}"/>
+                </td>
+            </xpath>
+
+            <!-- ========================= -->
+            <!-- TIPOGRAFIA COMPACTA -->
+            <!-- ========================= -->
+            <xpath expr="//table[contains(@class,'o_main_table')]" position="before">
+                <style>
+                    .o_main_table tbody td,
+                    .o_main_table tbody td span,
+                    .o_main_table tbody td p {
+                        font-size: 9.5pt !important;
+                        line-height: 1.2 !important;
+                    }
+                    .o_total_table tr.o_total td {
+                        font-size: 12.5pt !important;
+                    }
+                    .laer-client-address,
+                    .laer-client-address address,
+                    .laer-client-address address * {
+                        font-size: 12pt !important;
+                        line-height: 1.35 !important;
+                    }
+                </style>
+            </xpath>
+
+        </data>
+    </template>
+
+    <!-- ========================= -->
+    <!-- CLIENTE ARRIBA A LA DERECHA — FACTURAS CON LOCALIZACIÓN AR -->
+    <!-- l10n_ar.report_invoice_document reemplaza #informations por completo
+         (ver comentario más arriba), así que el recuadro de cliente definido
+         en report_invoice_document_compact NUNCA se aplica a AEN S.R.L. ni a
+         LAER TECHNOLOGY GROUP: el bloque de cliente real que ven es el que arma
+         l10n_ar dentro de #informations (columna izquierda). Acá lo movemos a
+         la columna derecha (sin duplicar contenido, con position="move") y le
+         agrandamos la tipografía a la dirección, que quedaba en 8pt por la
+         regla global "address" de compact_reports.css. -->
+    <!-- ========================= -->
+    <template id="l10n_ar_informations_client_top_right"
+              inherit_id="l10n_ar.report_invoice_document"
+              priority="18">
+        <data>
+            <xpath expr="//div[@id='informations']/div[1]" position="attributes">
+                <attribute name="class">col-6 laer-client-address</attribute>
+            </xpath>
+            <xpath expr="//div[@id='informations']/div[2]" position="after">
+                <xpath expr="//div[@id='informations']/div[1]" position="move"/>
+            </xpath>
+            <xpath expr="//div[@id='informations']" position="after">
+                <style>
+                    #informations .laer-client-address address,
+                    #informations .laer-client-address address * {
+                        font-size: 12pt !important;
+                        line-height: 1.35 !important;
+                    }
+                </style>
+            </xpath>
+        </data>
+    </template>
+
+</odoo>

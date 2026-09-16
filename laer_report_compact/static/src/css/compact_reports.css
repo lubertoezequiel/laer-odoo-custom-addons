@@ -5,10 +5,26 @@
 /* -------------------------------------------------------
    HEADER: fila compacta logo | empresa | cliente
    ------------------------------------------------------- */
+.header {
+    margin-bottom: 8px !important;
+    padding-bottom: 0 !important;
+}
+
 .laer-header-row {
-    margin-bottom: 4px !important;
-    padding-bottom: 4px !important;
-    border-bottom: 1px solid #ddd;
+    margin-bottom: 8px !important;
+    padding-bottom: 2px !important;
+}
+
+/* Paraguas: ningun elemento dentro del header (tabla, celdas, tarjeta de
+   cliente, widget de direccion de portal, etc.) debe mostrar borde,
+   sin importar de que modulo venga el estilo por defecto. */
+.laer-header-row,
+.laer-header-row table,
+.laer-header-row td,
+.laer-header-row th,
+.laer-header-row * {
+    border: none !important;
+    box-shadow: none !important;
 }
 
 .laer-logo-col img {
@@ -19,20 +35,8 @@
 }
 
 .laer-company-col {
-    font-size: 8pt !important;
+    font-size: 12pt !important;
     line-height: 1.3 !important;
-}
-
-.laer-partner-col {
-    font-size: 8pt !important;
-    line-height: 1.3 !important;
-}
-
-.laer-partner-col address,
-.laer-partner-col .mb-0 {
-    font-size: 8pt !important;
-    line-height: 1.3 !important;
-    margin-bottom: 0 !important;
 }
 
 /* Dirección de empresa compacta */
@@ -71,6 +75,7 @@ div.article h1 {
    ------------------------------------------------------- */
 #informations,
 div#informations {
+    margin-top: 0 !important;
     margin-bottom: 6px !important;
     padding: 6px 8px !important;
 }
@@ -82,14 +87,15 @@ div#informations {
 }
 
 #informations strong {
-    font-size: 8pt !important;
-    display: block;
+    font-size: 11pt !important;
+    display: inline;
+    margin-right: 3px;
     line-height: 1.2;
 }
 
 #informations div,
 #informations span {
-    font-size: 8pt !important;
+    font-size: 11pt !important;
     line-height: 1.3 !important;
 }
 
@@ -142,7 +148,7 @@ p[name="note"],
    ESPACIADO GENERAL
    ------------------------------------------------------- */
 .article {
-    padding-top: 4px !important;
+    padding-top: 6px !important;
 }
 
 .article .row {

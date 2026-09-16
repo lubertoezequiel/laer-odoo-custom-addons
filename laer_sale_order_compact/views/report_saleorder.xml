@@ -7,6 +7,23 @@
         <data>
 
             <!-- ===================================================== -->
+            <!-- DIRECCIÓN DEL CLIENTE (más grande, estaba a 8pt por -->
+            <!-- la regla global "address" de compact_reports.css)   -->
+            <!-- ===================================================== -->
+            <xpath expr="//t[@t-set='address']" position="replace">
+                <t t-set="address">
+                    <div class="laer-client-address">
+                        <div t-field="doc.partner_id" class="mb-0"
+                            t-options='{"widget": "contact", "fields": ["address", "name"], "no_marker": True}' />
+                        <p t-if="doc.partner_id.vat" class="mb-0">
+                            <t t-if="doc.company_id.account_fiscal_country_id.vat_label" t-out="doc.company_id.account_fiscal_country_id.vat_label"/>
+                            <t t-else="">Tax ID</t>: <span t-field="doc.partner_id.vat"/>
+                        </p>
+                    </div>
+                </t>
+            </xpath>
+
+            <!-- ===================================================== -->
             <!-- HEADER -->
             <!-- ===================================================== -->
             <xpath expr="//t[@t-set='layout_document_title']" position="replace">
@@ -28,7 +45,7 @@
 
             <xpath expr="//table[contains(@class,'o_main_table')]/thead/tr" position="replace">
                 <tr>
-                    <th class="text-start">Código</th>
+                    <th class="text-start" style="width:130px;">Código</th>
                     <th class="text-start">Descripción</th>
                     <th class="text-end">Cantidad</th>
                     <th class="text-end">Precio Unitario</th>
@@ -41,7 +58,7 @@
             <!-- CÓDIGO (REEMPLAZA PRIMERA COLUMNA DEL PRODUCTO) -->
             <!-- ===================================================== -->
             <xpath expr="//tbody//tr[contains(@name,'tr_product')]//td[1]" position="replace">
-                <td>
+                <td style="width:130px;">
                     <span t-field="line.product_id.name"/>
                 </td>
             </xpath>
@@ -88,11 +105,17 @@
                     .o_main_table tbody td,
                     .o_main_table tbody td span,
                     .o_main_table tbody td p {
-                        font-size: 11.5pt !important;
+                        font-size: 9.5pt !important;
                         line-height: 1.2 !important;
                     }
                     .o_total_table tr.o_total td {
                         font-size: 12.5pt !important;
+                    }
+                    .laer-client-address,
+                    .laer-client-address address,
+                    .laer-client-address address * {
+                        font-size: 12pt !important;
+                        line-height: 1.35 !important;
                     }
                 </style>
             </xpath>
