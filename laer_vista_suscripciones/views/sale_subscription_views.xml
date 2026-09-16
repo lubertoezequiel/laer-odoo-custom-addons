@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="sale_subscription_view_tree_deuda" model="ir.ui.view">
+        <field name="name">sale.subscription.order.list.deuda</field>
+        <field name="model">sale.order</field>
+        <field name="inherit_id" ref="sale_subscription.sale_subscription_view_tree"/>
+        <field name="arch" type="xml">
+            <field name="subscription_state" position="before">
+                <field name="company_currency_id" column_invisible="1"/>
+                <field name="amount_invoiced_due" string="Deuda" optional="show"
+                       widget="monetary" options="{'currency_field': 'company_currency_id'}"
+                       decoration-danger="has_amount_due"
+                       sum="Deuda total" readonly="1"/>
+                <field name="amount_invoiced_overdue" string="Deuda vencida" optional="show"
+                       widget="monetary" options="{'currency_field': 'company_currency_id'}"
+                       decoration-danger="amount_invoiced_overdue &gt; 0"
+                       decoration-bf="amount_invoiced_overdue &gt; 0"
+                       readonly="1"/>
+                <field name="invoice_overdue_date" string="Vence" optional="hide"
+                       decoration-danger="invoice_overdue_date and invoice_overdue_date &lt; current_date"
+                       readonly="1"/>
+                <field name="has_amount_due" column_invisible="1"/>
+            </field>
+        </field>
+    </record>
+
+    <record id="sale_subscription_view_search_deuda" model="ir.ui.view">
+        <field name="name">sale.order.search.deuda</field>
+        <field name="model">sale.order</field>
+        <field name="inherit_id" ref="sale_subscription.sale_subscription_view_search"/>
+        <field name="arch" type="xml">
+            <filter name="payment_exception" position="after">
+                <separator/>
+                <filter name="laer_with_due" string="Con deuda"
+                        domain="[('has_amount_due', '=', True)]"/>
+            </filter>
+            <filter name="customer" position="after">
+                <filter string="Con deuda" name="laer_group_with_due"
+                        context="{'group_by': 'has_amount_due'}"/>
+            </filter>
+        </field>
+    </record>
+
+</odoo>
