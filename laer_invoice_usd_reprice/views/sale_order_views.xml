@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="view_order_form_laer_usd_reprice" model="ir.ui.view">
+        <field name="name">sale.order.form.laer.usd.reprice</field>
+        <field name="model">sale.order</field>
+        <field name="inherit_id" ref="sale.view_order_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='laer_show_exchange_rate']" position="after">
+                <field name="laer_expected_tc" invisible="1"/>
+                <label for="laer_tc_manual" string="T.C. USD (orden)"/>
+                <div class="o_row">
+                    <field name="laer_tc_manual" digits="[12,4]" readonly="state not in ('draft', 'sent')"/>
+                    <button name="laer_action_refresh_tc" type="object"
+                            icon="fa-refresh"
+                            title="Volver a la cotización cargada en el sistema"
+                            invisible="state not in ('draft', 'sent') or laer_tc_manual == laer_expected_tc"
+                            class="btn btn-link p-0"/>
+                    <button name="laer_action_update_prices_from_usd" type="object"
+                            string="Recalcular con T.C. USD"
+                            class="btn btn-secondary ms-3"
+                            invisible="state not in ('draft', 'sent')"
+                            confirm="Esto recalcula el precio de las líneas cuyo precio proviene de una lista de precios en dólares, usando el T.C. actual. Las líneas con precio fijo en pesos no se tocan."/>
+                </div>
+            </xpath>
+        </field>
+    </record>
+
+</odoo>
