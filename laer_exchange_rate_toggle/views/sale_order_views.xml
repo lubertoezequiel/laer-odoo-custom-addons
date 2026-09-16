@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="view_order_form_laer_exchange_rate" model="ir.ui.view">
+        <field name="name">sale.order.form.laer.exchange.rate</field>
+        <field name="model">sale.order</field>
+        <field name="inherit_id" ref="sale.view_order_form"/>
+        <field name="arch" type="xml">
+            <!-- Pantalla principal, debajo de "Lista de precios". No hace
+                 falta entrar a "Otra información" para verlo. -->
+            <xpath expr="//div[hasclass('o_row')][field[@name='pricelist_id']]" position="after">
+                <field name="laer_show_exchange_rate"/>
+            </xpath>
+        </field>
+    </record>
+
+</odoo>

@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="view_move_form_laer_exchange_rate" model="ir.ui.view">
+        <field name="name">account.move.form.laer.exchange.rate</field>
+        <field name="model">account.move</field>
+        <field name="inherit_id" ref="account.view_move_form"/>
+        <field name="arch" type="xml">
+            <!-- Pantalla principal (header), no dentro de "Otra información"
+                 ni dentro del bloque de conversion de moneda (que solo se ve
+                 si la moneda de la factura difiere de la de la empresa).
+                 Asi queda visible siempre, sin importar la moneda ni el
+                 estado (el propio campo ya se bloquea solo fuera de
+                 borrador via su atributo readonly). -->
+            <xpath expr="//div[@name='due_date']" position="after">
+                <field name="laer_show_exchange_rate"/>
+            </xpath>
+        </field>
+    </record>
+
+</odoo>

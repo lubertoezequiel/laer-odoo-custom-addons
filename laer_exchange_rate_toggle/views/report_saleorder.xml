@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <template id="report_saleorder_document_exchange_rate"
+              inherit_id="sale.report_saleorder_document"
+              priority="18">
+        <!-- Va en la misma zona de "Fecha / Vendedor" (id="informations"),
+             como una columna mas, mismo lugar simple que usa la factura,
+             en vez de pelear con el layout de la tabla de totales. -->
+        <xpath expr="//div[@id='informations']" position="inside">
+            <div t-if="doc.laer_show_exchange_rate" class="col">
+                <t t-set="laer_usd" t-value="env['res.currency'].search([('name', '=', 'USD')], limit=1)"/>
+                <t t-set="laer_usd_rate"
+                   t-value="laer_usd and env['res.currency']._get_conversion_rate(laer_usd, doc.company_id.currency_id, doc.company_id, doc.date_order and doc.date_order.date() or None)"/>
+                <t t-if="laer_usd_rate">
+                    <strong>Tipo de cambio</strong>
+                    <div>
+                        1 USD =
+                        <span t-esc="'%.4f' % laer_usd_rate"/>
+                        <span t-esc="doc.company_id.currency_id.name"/>
+                    </div>
+                </t>
+            </div>
+        </xpath>
+    </template>
+
+</odoo>

@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- Se ancla en el parrafo "Importe total con letra" (campo generico
+         de Odoo, account.report_invoice_document, activado por la config
+         de empresa "display_invoice_amount_total_words"). Como la vista
+         de l10n_ar es una vista primaria que parte del arch ya combinado
+         de esta plantilla generica, este mismo xpath alcanza para AEN
+         S.R.L. y LAER TECHNOLOGY GROUP tambien, sin necesitar una
+         plantilla separada para AR. -->
+    <template id="report_invoice_document_exchange_rate"
+              inherit_id="account.report_invoice_document"
+              priority="18">
+        <xpath expr="//p[@t-if='o.company_id.display_invoice_amount_total_words']" position="after">
+            <p t-if="o.laer_show_exchange_rate" class="text-end lh-sm">
+                <t t-set="laer_usd" t-value="env['res.currency'].search([('name', '=', 'USD')], limit=1)"/>
+                <t t-set="laer_usd_rate"
+                   t-value="laer_usd and env['res.currency']._get_conversion_rate(laer_usd, o.company_id.currency_id, o.company_id, o.invoice_date or None)"/>
+                <t t-if="laer_usd_rate">
+                    <strong>Tipo de cambio:</strong>
+                    1 USD =
+                    <span t-esc="'%.4f' % laer_usd_rate"/>
+                    <span t-esc="o.company_id.currency_id.name"/>
+                </t>
+            </p>
+        </xpath>
+    </template>
+
+</odoo>
