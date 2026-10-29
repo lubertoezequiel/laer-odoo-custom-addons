@@ -13,9 +13,19 @@
               priority="18">
         <xpath expr="//p[@t-if='o.company_id.display_invoice_amount_total_words']" position="after">
             <p t-if="o.laer_show_exchange_rate" class="text-end lh-sm">
-                <t t-set="laer_usd" t-value="env['res.currency'].search([('name', '=', 'USD')], limit=1)"/>
+                <!-- Si laer_invoice_usd_reprice esta instalado y esta factura
+                     tiene un T.C. cargado a mano (laer_tc_manual), ese es el
+                     que se uso realmente para recalcular los precios: hay
+                     que mostrar ese, no el de la tabla de cotizaciones, que
+                     puede haber cambiado desde entonces. Si no, se sigue
+                     calculando como antes. -->
                 <t t-set="laer_usd_rate"
-                   t-value="laer_usd and env['res.currency']._get_conversion_rate(laer_usd, o.company_id.currency_id, o.company_id, o.invoice_date or None)"/>
+                   t-value="'laer_tc_manual' in o._fields and o.laer_tc_manual or False"/>
+                <t t-if="not laer_usd_rate">
+                    <t t-set="laer_usd" t-value="env['res.currency'].search([('name', '=', 'USD')], limit=1)"/>
+                    <t t-set="laer_usd_rate"
+                       t-value="laer_usd and env['res.currency']._get_conversion_rate(laer_usd, o.company_id.currency_id, o.company_id, o.invoice_date or None)"/>
+                </t>
                 <t t-if="laer_usd_rate">
                     <strong>Tipo de cambio:</strong>
                     1 USD =
