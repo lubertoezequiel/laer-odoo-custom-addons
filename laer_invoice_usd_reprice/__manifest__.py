@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 {
     'name': 'Laer - Recalcular Precios por Tipo de Cambio USD',
-    'version': '19.0.1.0.0',
+    'version': '19.0.1.1.0',
     'category': 'Technical',
     'summary': 'Campo de tipo de cambio manual y boton para recalcular precios desde listas en USD, en la cotizacion y en la factura',
     'description': """

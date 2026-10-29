@@ -26,4 +26,22 @@
         </field>
     </record>
 
+    <!-- Columna "T.C. USD" en las listas de órdenes de venta y cotizaciones.
+         Se hereda la vista base sale.sale_order_tree: tanto la lista de
+         Órdenes (view_order_tree) como la de Cotizaciones
+         (view_quotation_tree / _with_onboarding) son herencias primarias de
+         esa base, así que una sola extensión cubre todas.
+         optional="hide": disponible en el selector de columnas, cada
+         usuario la activa donde la quiera; Odoo recuerda la elección. -->
+    <record id="sale_order_tree_laer_tc" model="ir.ui.view">
+        <field name="name">sale.order.list.laer.tc.usd</field>
+        <field name="model">sale.order</field>
+        <field name="inherit_id" ref="sale.sale_order_tree"/>
+        <field name="arch" type="xml">
+            <field name="amount_total" position="after">
+                <field name="laer_tc_manual" string="T.C. USD" optional="hide" digits="[12,4]"/>
+            </field>
+        </field>
+    </record>
+
 </odoo>

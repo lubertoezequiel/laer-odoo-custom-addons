@@ -26,4 +26,24 @@
         </field>
     </record>
 
+    <!-- Columna "T.C. USD" en las listas de facturas y notas de crédito.
+         Se hereda la vista base account.view_invoice_tree: las listas de
+         Facturas (view_out_invoice_tree) y de Notas de Crédito
+         (view_out_credit_note_tree) son herencias primarias de esa base,
+         así que una sola extensión cubre ambas (y también las de compras,
+         donde queda disponible pero oculta igual que acá).
+         optional="hide": la columna aparece en el selector de columnas de
+         la lista y cada usuario la activa donde la quiera ver; Odoo
+         recuerda la elección por usuario y por vista. -->
+    <record id="view_invoice_tree_laer_tc" model="ir.ui.view">
+        <field name="name">account.move.list.laer.tc.usd</field>
+        <field name="model">account.move</field>
+        <field name="inherit_id" ref="account.view_invoice_tree"/>
+        <field name="arch" type="xml">
+            <field name="amount_total_in_currency_signed" position="after">
+                <field name="laer_tc_manual" string="T.C. USD" optional="hide" digits="[12,4]"/>
+            </field>
+        </field>
+    </record>
+
 </odoo>
