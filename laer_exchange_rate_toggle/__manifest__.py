@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 {
     'name': 'Laer - Mostrar Tipo de Cambio',
-    'version': '19.0.1.0.0',
+    'version': '19.0.1.1.0',
     'category': 'Technical',
     'summary': 'Checkbox para mostrar el tipo de cambio en el PDF de la orden de venta y de la factura',
     'description': """
